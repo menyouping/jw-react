@@ -39,7 +39,7 @@ const menuData = [
         path: 'template',
       },
       {
-        name: '文本比较',
+        name: '比较',
         path: 'compare',
       },
     ],

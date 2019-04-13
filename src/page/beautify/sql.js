@@ -1,30 +1,29 @@
 
 import CodeEditor from "@/component/CodeEditor";
-import jslParser from "@/component/_utils/jsl.parser.min.js";
 import vkbeautify from "@/component/_utils/vkbeautify.js";
 import React from 'react';
 
-export default class JSONEditor extends React.Component {
+export default class XMLEditor extends React.Component {
 
   handleBeautify = (content) => {
-    jslParser.parse(content);
-    return vkbeautify.json(content);
+    content = vkbeautify.sql(content);
+    return content;
   }
 
   handleUnformat = (content) => {
-    jslParser.parse(content);
-    return vkbeautify.jsonmin(content).trim();
+    return content = vkbeautify.sqlmin(content).trim();
   }
 
   render() {
     const defaultConfig = {
-      contentType: 'json'
+      code: 'select * from table',
+      contentType: 'sql'
     };
     return (
       <CodeEditor
         handleBeautify={this.handleBeautify}
         handleUnformat={this.handleUnformat}
-        defaultConfig = {defaultConfig}
+        defaultConfig={defaultConfig}
       />
     );
   }

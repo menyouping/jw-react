@@ -10,7 +10,9 @@ export default [
         {
           path: 'beautify',
           routes: [
-            { path: 'json', component: './beautify/json' }
+            { path: 'json', component: './beautify/json' },
+            { path: 'xml', component: './beautify/xml' },
+            { path: 'sql', component: './beautify/sql' },
           ]
         },
         {
