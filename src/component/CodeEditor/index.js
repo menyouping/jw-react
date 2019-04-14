@@ -1,8 +1,7 @@
 
+import { Button, Col, notification, Row } from 'antd';
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import { notification, Row, Col, Button } from 'antd';
-import { Icon } from 'antd';
 import { isFunction } from 'util';
 
 export default class CodeEditor extends React.Component {
@@ -12,6 +11,7 @@ export default class CodeEditor extends React.Component {
       code: '{\n    "hello": "Hello from Jay!"\n}',
       mode: 'normal',
       height: 480,
+      editorHeight: 460,
       contentType: 'json',
       ...props.defaultConfig
     }
@@ -60,16 +60,16 @@ export default class CodeEditor extends React.Component {
     }
   }
 
-  changeSize = () => {
-    if (this.state.mode == 'normal') {
-      this.setState({ ...this.state, mode: 'large', height: 1000 });
-    } else {
-      this.setState({ ...this.state, mode: 'normal', height: 480 });
-    }
+  onEditorChange = (newValue, e) => {
+    this.setState({
+      ...this.state,
+      code: newValue,
+      editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460)
+    });
   }
 
   render() {
-    const { code } = this.state;
+    const { code, contentType, editorHeight } = this.state;
     const options = {
       selectOnLineNumbers: true,
       roundedSelection: false,
@@ -89,23 +89,14 @@ export default class CodeEditor extends React.Component {
         <Row style={{ paddingTop: '15px' }}>
           <Col span={24}>
             <MonacoEditor
-              height={this.state.height}
-              language={this.state.contentType}
+              height={editorHeight}
+              language={contentType}
               theme="vs-dark"
-              value={this.state.code}
+              value={code}
               options={this.options}
+              onChange={this.onEditorChange}
               editorDidMount={this.editorDidMount}
             />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24} align="right">
-            {
-              this.state.mode == 'normal' ?
-                <Icon type="down-square" onClick={this.changeSize} />
-                :
-                <Icon type="up-square" onClick={this.changeSize} />
-            }
           </Col>
         </Row>
       </div>

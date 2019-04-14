@@ -9,7 +9,6 @@ export default class SetEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            mode: 'tpl',
             aCode: 'B\n1\nA\n1',
             bCode: "1\n",
             result: '',

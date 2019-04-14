@@ -23,6 +23,12 @@ export default [
             { path: 'compare', component: './calc/compare' }
           ]
         },
+        {
+          path: 'render',
+          routes: [
+            { path: 'markdown', component: './render/markdown' },
+          ]
+        },
         { path: 'cards', component: './cards' },
         { path: 'locale', component: './locale' }
       ]
