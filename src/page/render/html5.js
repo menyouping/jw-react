@@ -1,42 +1,59 @@
-import { Col, Row } from 'antd';
+
+import { Button, Col, Row } from 'antd';
 import React from 'react';
-import MonacoEditor from 'react-monaco-editor';
 import ReactMarkdown from 'react-markdown';
+import MonacoEditor from 'react-monaco-editor';
 
 
 export default class Html5Editor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            code: '<html>/n    <head>\n        <title>Hello World</title>\n     </head>\n    <body>\n    </body>\n</html>',
+            mode: 'normal',
+            code: "<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <label>Hello from Jay</label>\n</body>\n</html>",
+            editorHeight: 460,
+            isPreview: true,
         }
     }
 
     editorDidMount = (editor, monaco) => {
         this.editor = editor;
+        this.editor.focus();
     }
 
     onEditorChange = (newValue, e) => {
         this.setState({
             ...this.state,
             code: newValue,
+            editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460),
         });
     }
 
+    onPreview = () => {
+        this.setState({
+            ...this.state,
+            isPreview: !this.state.isPreview,
+        });
+    }
 
     render() {
-        const { code} = this.state;
+        const { code, editorHeight, isPreview } = this.state;
         const options = {
             selectOnLineNumbers: true
         };
         return (
             <div>
                 <Row>
-                    <Col span={12}>
+                    <Col span={24} style={{ paddingBottom: '15px' }}>
+                        <Button onClick={this.onPreview} type="primary">{isPreview ? '隐藏' : '预览'}</Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={isPreview ? 12 : 24}>
                         <MonacoEditor
-                            width="420"
-                            height="460"
-                            language="javascript"
+                            width={isPreview ? 420 : 980}
+                            height={editorHeight}
+                            language="html"
                             theme="vs-dark"
                             value={code}
                             options={options}
@@ -44,11 +61,13 @@ export default class Html5Editor extends React.Component {
                             editorDidMount={this.editorDidMount}
                         />
                     </Col>
-                    <Col span={12}>
-                        <ReactMarkdown source={code} />
+                    <Col span={isPreview ? 12 : 0}>
+                        <div dangerouslySetInnerHTML={{ __html: code }}>
+                        </div>
                     </Col>
                 </Row>
             </div>
         );
     }
 }
+

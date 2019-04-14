@@ -26,6 +26,7 @@ export default [
         {
           path: 'render',
           routes: [
+            { path: 'html5', component: './render/html5' },
             { path: 'markdown', component: './render/markdown' },
           ]
         },
