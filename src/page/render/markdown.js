@@ -47,7 +47,7 @@ export default class MarkdownEditor extends React.Component {
                         <Button onClick={this.onPreview} type="primary">{isPreview ? '隐藏' : '预览'}</Button>
                     </Col>
                 </Row>
-                <Row>
+                <Row style={{background: '#ffffff'}}>
                     <Col span={isPreview ? 12 : 24}>
                         <MonacoEditor
                             width={isPreview ? 420 : 980}
