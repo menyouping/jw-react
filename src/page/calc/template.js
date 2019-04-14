@@ -1,18 +1,23 @@
+import { Button, Col, Radio, Row, message, Icon } from 'antd';
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import { Row, Col, Button, Radio } from 'antd';
 import styles from "./template.css";
-import RadioGroup from '_antd@3.16.2@antd/lib/radio/group';
-import { Card } from 'antd';
 
+const RadioGroup = Radio.Group;
+
+const DEFAULT_TPL = '{{i}}.{{line}}';
+const DEFAULT_FUNC = "function beautify(line, i) {\n    return line.trim();\n}";
+const DEFAULT_HANDLER_EDITOR_WIDTH = 370;
 export default class TemplateEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             mode: 'tpl',
-            original: '原始值',
-            handler: '处理函数',
-            result: '结果',
+            original: 'B\n1\nA\n1',
+            handler: DEFAULT_TPL,
+            result: '',
+            handlerEditorWidth: DEFAULT_HANDLER_EDITOR_WIDTH,
+            resultVisible: true,
         }
     }
 
@@ -28,8 +33,18 @@ export default class TemplateEditor extends React.Component {
         this.resultEditor = editor;
     }
 
-    onEditorChange(newValue, e) {
-        console.log('onChange', newValue, e);
+    onOriginalEditorChange = (newValue, e) => {
+        this.setState({
+            ...this.state,
+            original: newValue,
+        });
+    }
+
+    onHandlerEditorChange = (newValue, e) => {
+        this.setState({
+            ...this.state,
+            handler: newValue,
+        });
     }
 
     onOriginalUnique = () => {
@@ -64,6 +79,7 @@ export default class TemplateEditor extends React.Component {
         this.setState({
             ...this.state,
             mode,
+            handler: mode == 'tpl' ? DEFAULT_TPL : DEFAULT_FUNC,
         });
     }
 
@@ -71,7 +87,7 @@ export default class TemplateEditor extends React.Component {
         this.setState({
             ...this.state,
             mode: 'func',
-            handler: "function beautify(line, i) {\n    return line.trim();\n}",
+            handler: DEFAULT_FUNC,
         });
     }
 
@@ -80,6 +96,64 @@ export default class TemplateEditor extends React.Component {
             ...this.state,
             mode: 'func',
             handler: "function beautify(line, i) {\n    return line.replace(/^\\d+\\./,'');\n}",
+        });
+    }
+
+    onBeautify = () => {
+        let { original, handler, mode } = this.state;
+        if (!original) {
+            this.setState({
+                ...this.state,
+                result: "",
+            });
+            return;
+        }
+        if (!handler) {
+            message.warning('请设置模板！例如"AAA{{line}}BBB"');
+            return;
+        }
+
+        let list = [];
+
+        if (mode == "tpl") {
+            let tpl = handler.replace(/\s*\n+\s*/g, '');
+            original.split('\n').forEach((line, i) => {
+                list.push(tpl.replace(/{{line}}/g, line).replace(/{{i}}/g, (i + 1)));
+            });
+        } else {
+            try {
+                let funcTpl = "({code})('{line}', {i})".replace('{code}', handler);
+                original.split('\n').forEach((line, i) => {
+                    let func = funcTpl.replace('{line}', line.replace("'", "\\'")).replace('{i}', i + 1);
+                    let result = eval.call(null, func);
+                    list.push(result);
+                });
+            } catch (ex) {
+                message.warning('函数编译失败! 错误信息: ' + ex.message);
+                return;
+            }
+        }
+
+        this.setState({
+            ...this.state,
+            handlerEditorWidth: DEFAULT_HANDLER_EDITOR_WIDTH,
+            resultVisible: true,
+            result: list.join('\n'),
+        });
+    }
+
+    onCopy = () => {
+        this.setState({
+            ...this.state,
+            original: this.state.result,
+            result: ''
+        });
+    }
+
+    onExpandHandlerEditor = () => {
+        this.setState({
+            ...this.state,
+            resultVisible: !this.state.resultVisible,
         });
     }
 
@@ -127,7 +201,7 @@ export default class TemplateEditor extends React.Component {
             return;
         }
         let list = content.split('\n');
-        var isNumber = true;
+        let isNumber = true;
         if (/[a-zA-Z]/.test(content)) {
             isNumber = false;
         } else {
@@ -148,7 +222,7 @@ export default class TemplateEditor extends React.Component {
     }
 
     render() {
-        const { original, handler, result } = this.state;
+        const { original, handler, result, resultVisible } = this.state;
         const options = {
             selectOnLineNumbers: true
         };
@@ -161,7 +235,7 @@ export default class TemplateEditor extends React.Component {
                     <Col span={8} offset={1}>
                         <label>处理器B</label>
                     </Col>
-                    <Col span={6} offset={2}>
+                    <Col span={resultVisible ? 6 : 0} offset={1}>
                         <label>结果</label>
                     </Col>
                 </Row>
@@ -178,9 +252,11 @@ export default class TemplateEditor extends React.Component {
                         </RadioGroup>
                         <Button type='default' onClick={this.onTrim} className={styles.span10}>去空格</Button>
                         <Button type='default' onClick={this.onRemoveLine} className={styles.span10}>去行号</Button>
+                        <Icon type={resultVisible ? 'right-square' : 'left-square' } onClick={this.onExpandHandlerEditor} className={styles.span5} />
                     </Col>
-                    <Col span={6} offset={2}>
-                        <Button type='default'>复制到A</Button>
+                    <Col span={resultVisible ? 6 : 0} offset={1}>
+                        <Button type='primary' onClick={this.onBeautify}>美化</Button>
+                        <Button type='default' onClick={this.onCopy} className={styles.span10}>复制到A</Button>
                     </Col>
                 </Row>
                 <Row>
@@ -192,31 +268,29 @@ export default class TemplateEditor extends React.Component {
                             theme="vs-dark"
                             value={original}
                             options={options}
-                            onChange={this.onEditorChange}
+                            onChange={this.onOriginalEditorChange}
                             editorDidMount={this.originalEditorDidMount}
                         />
                     </Col>
-                    <Col span={8} offset={1}>
+                    <Col span={resultVisible ? 8 : 14} offset={1}>
                         <MonacoEditor
-                            width="370"
+                            width={resultVisible ? 370 : 670}
                             height="460"
                             language="javascript"
                             theme="vs-dark"
                             value={handler}
                             options={options}
-                            onChange={this.onEditorChange}
+                            onChange={this.onHandlerEditorChange}
                             editorDidMount={this.handlerEditorDidMount}
                         />
                     </Col>
-                    <Col span={2} className={styles.vcenter}>
-                        <Button type='primary'>美化</Button>
-                    </Col>
-                    <Col span={6} >
+                    <Col span={resultVisible ? 6 : 0} offset={1}>
                         <MonacoEditor
                             width="300"
                             height="460"
                             language="javascript"
                             theme="vs-dark"
+                            visible={resultVisible}
                             value={result}
                             options={options}
                             editorDidMount={this.resultEditorDidMount}

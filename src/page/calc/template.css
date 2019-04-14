@@ -5,7 +5,9 @@
 .span10 {
     margin-left: 10px;
 }
-
+.span5 {
+    margin-left: 5px;
+}
 .vspan15 {
     margin-bottom: 10px;
 }
