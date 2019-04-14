@@ -18,6 +18,7 @@ export default [
         {
           path: 'calc',
           routes: [
+            { path: 'template', component: './calc/template' },
             { path: 'compare', component: './calc/compare' }
           ]
         },

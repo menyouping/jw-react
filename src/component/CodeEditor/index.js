@@ -75,7 +75,7 @@ export default class CodeEditor extends React.Component {
       roundedSelection: false,
       readOnly: false,
       cursorStyle: 'line',
-      automaticLayout: false,
+      automaticLayout: true,
       ...this.props.options
     };
     return (
@@ -89,7 +89,6 @@ export default class CodeEditor extends React.Component {
         <Row style={{ paddingTop: '15px' }}>
           <Col span={24}>
             <MonacoEditor
-              width="1135"
               height={this.state.height}
               language={this.state.contentType}
               theme="vs-dark"
