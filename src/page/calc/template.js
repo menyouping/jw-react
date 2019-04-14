@@ -1,13 +1,13 @@
-import { Button, Col, Radio, Row, message, Icon } from 'antd';
+import calc from '@/component/_utils/calc';
+import { Button, Col, Icon, message, Radio, Row } from 'antd';
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import styles from "./template.css";
+import styles from "./calc.css";
 
 const RadioGroup = Radio.Group;
 
 const DEFAULT_TPL = '{{i}}.{{line}}';
 const DEFAULT_FUNC = "function beautify(line, i) {\n    return line.trim();\n}";
-const DEFAULT_HANDLER_EDITOR_WIDTH = 370;
 export default class TemplateEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -16,7 +16,6 @@ export default class TemplateEditor extends React.Component {
             original: 'B\n1\nA\n1',
             handler: DEFAULT_TPL,
             result: '',
-            handlerEditorWidth: DEFAULT_HANDLER_EDITOR_WIDTH,
             resultVisible: true,
         }
     }
@@ -49,7 +48,7 @@ export default class TemplateEditor extends React.Component {
 
     onOriginalUnique = () => {
         let content = this.originalEditor.getValue();
-        content = this.unique(content);
+        content = calc.unique(content);
         this.setState({
             ...this.state,
             original: content,
@@ -58,7 +57,7 @@ export default class TemplateEditor extends React.Component {
 
     onOriginalAsc = () => {
         let content = this.originalEditor.getValue();
-        content = this.sort(content, true);
+        content = calc.sort(content, true);
         this.setState({
             ...this.state,
             original: content,
@@ -67,7 +66,7 @@ export default class TemplateEditor extends React.Component {
 
     onOriginalDesc = () => {
         let content = this.originalEditor.getValue();
-        content = this.sort(content, false);
+        content = calc.sort(content, false);
         this.setState({
             ...this.state,
             original: content,
@@ -136,7 +135,6 @@ export default class TemplateEditor extends React.Component {
 
         this.setState({
             ...this.state,
-            handlerEditorWidth: DEFAULT_HANDLER_EDITOR_WIDTH,
             resultVisible: true,
             result: list.join('\n'),
         });
@@ -155,70 +153,6 @@ export default class TemplateEditor extends React.Component {
             ...this.state,
             resultVisible: !this.state.resultVisible,
         });
-    }
-
-    unique = (content) => {
-        if (!content) {
-            return content;
-        }
-        let list = this.handle(content);
-        return list.join('\n');
-    }
-
-    handle = (content) => {
-        if (!content) {
-            return [];
-        }
-        let set = new Set();
-        let list = [];
-        content.split('\n').forEach(line => {
-            if (line && !set.has(line)) {
-                list.push(line);
-                set.add(line);
-            }
-        });
-        return list;
-    }
-
-    stringAsc = (a, b) => {
-        return a == b ? 0 : (a > b ? 1 : -1);
-    }
-
-    stringDesc = (a, b) => {
-        return -this.stringAsc(a, b);
-    }
-
-    numberAsc = (a, b) => {
-        return parseFloat(a) - parseFloat(b);
-    }
-
-    numberDesc = (a, b) => {
-        return -this.numberAsc(a, b);
-    }
-
-    sort = (content, isAsc) => {
-        if (!content) {
-            return;
-        }
-        let list = content.split('\n');
-        let isNumber = true;
-        if (/[a-zA-Z]/.test(content)) {
-            isNumber = false;
-        } else {
-            list.forEach(n => {
-                if (isNaN(parseFloat(n)) || !isFinite(n)) {
-                    isNumber = false;
-                    return false;
-                }
-            });
-        }
-        if (isNumber) {
-            list = list.sort(isAsc ? this.numberAsc : this.numberDesc);
-        } else {
-            list = list.sort(isAsc ? this.stringAsc : this.stringDesc);
-        }
-        content = list.join('\n');
-        return content;
     }
 
     render() {
@@ -252,7 +186,7 @@ export default class TemplateEditor extends React.Component {
                         </RadioGroup>
                         <Button type='default' onClick={this.onTrim} className={styles.span10}>去空格</Button>
                         <Button type='default' onClick={this.onRemoveLine} className={styles.span10}>去行号</Button>
-                        <Icon type={resultVisible ? 'right-square' : 'left-square' } onClick={this.onExpandHandlerEditor} className={styles.span5} />
+                        <Icon type={resultVisible ? 'right-square' : 'left-square'} onClick={this.onExpandHandlerEditor} className={styles.span5} />
                     </Col>
                     <Col span={resultVisible ? 6 : 0} offset={1}>
                         <Button type='primary' onClick={this.onBeautify}>美化</Button>
@@ -262,7 +196,7 @@ export default class TemplateEditor extends React.Component {
                 <Row>
                     <Col span={6}>
                         <MonacoEditor
-                            width="300"
+                            width="280"
                             height="460"
                             language="javascript"
                             theme="vs-dark"
@@ -274,7 +208,7 @@ export default class TemplateEditor extends React.Component {
                     </Col>
                     <Col span={resultVisible ? 8 : 14} offset={1}>
                         <MonacoEditor
-                            width={resultVisible ? 370 : 670}
+                            width={resultVisible ? 360 : 640}
                             height="460"
                             language="javascript"
                             theme="vs-dark"
@@ -286,11 +220,10 @@ export default class TemplateEditor extends React.Component {
                     </Col>
                     <Col span={resultVisible ? 6 : 0} offset={1}>
                         <MonacoEditor
-                            width="300"
+                            width="280"
                             height="460"
                             language="javascript"
                             theme="vs-dark"
-                            visible={resultVisible}
                             value={result}
                             options={options}
                             editorDidMount={this.resultEditorDidMount}

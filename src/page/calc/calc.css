@@ -16,3 +16,12 @@
     text-align: center;
     margin-top: 200px;
 }
+
+.center {
+    text-align: center;
+}
+
+.margin {
+    margin-bottom: 10px;
+    display: block;
+}
