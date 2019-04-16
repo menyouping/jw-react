@@ -12,7 +12,7 @@ const DEFAULT_TPL = '{{i}}.{{line}}';
 const DEFAULT_FUNC = "function beautify(line, i) {\n    return line.trim();\n}";
 
 const DEFAULT_MULTI_TPL = '{{data}}';
-const DEFAULT_MULTI_FUNC = "function beautify(data) {\n    return data.trim();\n}";
+const DEFAULT_MULTI_FUNC = "function beautify(data) {\n    return data.length;\n}";
 export default class TemplateEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -214,8 +214,8 @@ export default class TemplateEditor extends React.Component {
                     </Col>
                     <Col span={8} offset={1}>
                         <Select defaultValue="line" onChange={this.handleContentTypeChange}>
-                            <Option value="line">单行</Option>
-                            <Option value="multi">多行</Option>
+                            <Option value="line">多行</Option>
+                            <Option value="one">一行</Option>
                         </Select>
                         &nbsp;&nbsp;
                         <Select defaultValue="tpl" onChange={this.handleHandlerTypeChange}>
