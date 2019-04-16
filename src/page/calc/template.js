@@ -103,6 +103,14 @@ export default class TemplateEditor extends React.Component {
         });
     }
 
+    onLength = () => {
+        this.setState({
+            ...this.state,
+            handlerType: 'func',
+            handler: DEFAULT_MULTI_FUNC,
+        });
+    }
+
     onRemoveLine = () => {
         this.setState({
             ...this.state,
@@ -189,7 +197,7 @@ export default class TemplateEditor extends React.Component {
     }
 
     render() {
-        const { original, handler, result, resultVisible, contentType } = this.state;
+        const { original, handler, result, resultVisible, contentType, handlerType } = this.state;
         const options = {
             selectOnLineNumbers: true
         };
@@ -213,12 +221,12 @@ export default class TemplateEditor extends React.Component {
                         <Button type='default' onClick={this.onOriginalDesc} className={styles.span10}>降序</Button>
                     </Col>
                     <Col span={8} offset={1}>
-                        <Select defaultValue="line" onChange={this.handleContentTypeChange}>
+                        <Select defaultValue="line" value={contentType} onChange={this.handleContentTypeChange}>
                             <Option value="line">多行</Option>
                             <Option value="one">一行</Option>
                         </Select>
                         &nbsp;&nbsp;
-                        <Select defaultValue="tpl" onChange={this.handleHandlerTypeChange}>
+                        <Select defaultValue="tpl" value={handlerType} onChange={this.handleHandlerTypeChange}>
                             <Option value="tpl">模版</Option>
                             <Option value="func">函数</Option>
                         </Select>
@@ -229,7 +237,7 @@ export default class TemplateEditor extends React.Component {
                                     <Button type='default' onClick={this.onRemoveLine} className={styles.span10}>去行号</Button>
                                 </div>
                                 :
-                                ''
+                                <Button type='default' onClick={this.onLength} className={styles.span10}>字符长度</Button>
                         }
                         <Icon type={resultVisible ? 'right-square' : 'left-square'} onClick={this.onExpandHandlerEditor} className={styles.span5} />
                     </Col>
