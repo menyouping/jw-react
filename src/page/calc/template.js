@@ -4,20 +4,42 @@ import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import styles from "./calc.css";
 
-const RadioGroup = Radio.Group;
+import { Select } from 'antd';
+const Option = Select.Option;
+
 
 const DEFAULT_TPL = '{{i}}.{{line}}';
 const DEFAULT_FUNC = "function beautify(line, i) {\n    return line.trim();\n}";
+
+const DEFAULT_MULTI_TPL = '{{data}}';
+const DEFAULT_MULTI_FUNC = "function beautify(data) {\n    return data.trim();\n}";
 export default class TemplateEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            mode: 'tpl',
             original: 'B\n1\nA\n1',
             handler: DEFAULT_TPL,
             result: '',
             resultVisible: true,
+            contentType: 'line',
+            handlerType: 'tpl',
         }
+    }
+
+    handleContentTypeChange = (value) => {
+        this.setState({
+            ...this.state,
+            contentType: value,
+            handler: this.getHandlerContent(value, this.state.handlerType),
+        });
+    }
+
+    handleHandlerTypeChange = (value) => {
+        this.setState({
+            ...this.state,
+            handlerType: value,
+            handler: this.getHandlerContent(this.state.contentType, value),
+        });
     }
 
     originalEditorDidMount = (editor, monaco) => {
@@ -73,19 +95,10 @@ export default class TemplateEditor extends React.Component {
         });
     }
 
-    onModeChange = (e) => {
-        let mode = e.target.value;
-        this.setState({
-            ...this.state,
-            mode,
-            handler: mode == 'tpl' ? DEFAULT_TPL : DEFAULT_FUNC,
-        });
-    }
-
     onTrim = () => {
         this.setState({
             ...this.state,
-            mode: 'func',
+            handlerType: 'func',
             handler: DEFAULT_FUNC,
         });
     }
@@ -93,13 +106,13 @@ export default class TemplateEditor extends React.Component {
     onRemoveLine = () => {
         this.setState({
             ...this.state,
-            mode: 'func',
+            handlerType: 'func',
             handler: "function beautify(line, i) {\n    return line.replace(/^\\d+\\./,'');\n}",
         });
     }
 
     onBeautify = () => {
-        let { original, handler, mode } = this.state;
+        let { original, handler, handlerType, contentType } = this.state;
         if (!original) {
             this.setState({
                 ...this.state,
@@ -114,19 +127,31 @@ export default class TemplateEditor extends React.Component {
 
         let list = [];
 
-        if (mode == "tpl") {
-            let tpl = handler.replace(/\s*\n+\s*/g, '');
-            original.split('\n').forEach((line, i) => {
-                list.push(tpl.replace(/{{line}}/g, line).replace(/{{i}}/g, (i + 1)));
-            });
+        if (handlerType == "tpl") {
+            if (contentType == 'line') {
+                let tpl = handler.replace(/\s*\n+\s*/g, '');
+                original.split('\n').forEach((line, i) => {
+                    list.push(tpl.replace(/{{line}}/g, line).replace(/{{i}}/g, (i + 1)));
+                });
+            } else {
+                let tpl = handler.replace(/\s*\n+\s*/g, '');
+                list.push(tpl.replace(/{{data}}/g, original));
+            }
         } else {
             try {
-                let funcTpl = "({code})('{line}', {i})".replace('{code}', handler);
-                original.split('\n').forEach((line, i) => {
-                    let func = funcTpl.replace('{line}', line.replace("'", "\\'")).replace('{i}', i + 1);
+                if (contentType == 'line') {
+                    let funcTpl = "({code})(`{line}`, {i})".replace(/\{code\}/g, handler);
+                    original.split('\n').forEach((line, i) => {
+                        let func = funcTpl.replace(/\{line\}/g, line).replace(/\{i\}/g, i + 1);
+                        let result = eval.call(null, func);
+                        list.push(result);
+                    });
+                } else {
+                    let funcTpl = "({code})(`{data}`)".replace(/\{code\}/g, handler);
+                    let func = funcTpl.replace(/\{data\}/g, original);
                     let result = eval.call(null, func);
                     list.push(result);
-                });
+                }
             } catch (ex) {
                 message.warning('函数编译失败! 错误信息: ' + ex.message);
                 return;
@@ -155,8 +180,16 @@ export default class TemplateEditor extends React.Component {
         });
     }
 
+    getHandlerContent = (contentType, handlerType) => {
+        if (contentType == 'line') {
+            return handlerType == 'tpl' ? DEFAULT_TPL : DEFAULT_FUNC
+        } else {
+            return handlerType == 'tpl' ? DEFAULT_MULTI_TPL : DEFAULT_MULTI_FUNC
+        }
+    }
+
     render() {
-        const { original, handler, result, resultVisible } = this.state;
+        const { original, handler, result, resultVisible, contentType } = this.state;
         const options = {
             selectOnLineNumbers: true
         };
@@ -180,12 +213,24 @@ export default class TemplateEditor extends React.Component {
                         <Button type='default' onClick={this.onOriginalDesc} className={styles.span10}>降序</Button>
                     </Col>
                     <Col span={8} offset={1}>
-                        <RadioGroup onChange={this.onModeChange} value={this.state.mode}>
-                            <Radio value="tpl">模版</Radio>
-                            <Radio value="func">函数</Radio>
-                        </RadioGroup>
-                        <Button type='default' onClick={this.onTrim} className={styles.span10}>去空格</Button>
-                        <Button type='default' onClick={this.onRemoveLine} className={styles.span10}>去行号</Button>
+                        <Select defaultValue="line" onChange={this.handleContentTypeChange}>
+                            <Option value="line">单行</Option>
+                            <Option value="multi">多行</Option>
+                        </Select>
+                        &nbsp;&nbsp;
+                        <Select defaultValue="tpl" onChange={this.handleHandlerTypeChange}>
+                            <Option value="tpl">模版</Option>
+                            <Option value="func">函数</Option>
+                        </Select>
+                        {
+                            contentType == 'line' ?
+                                <div style={{ display: 'inline-block' }}>
+                                    <Button type='default' onClick={this.onTrim} className={styles.span10}>去空格</Button>
+                                    <Button type='default' onClick={this.onRemoveLine} className={styles.span10}>去行号</Button>
+                                </div>
+                                :
+                                ''
+                        }
                         <Icon type={resultVisible ? 'right-square' : 'left-square'} onClick={this.onExpandHandlerEditor} className={styles.span5} />
                     </Col>
                     <Col span={resultVisible ? 6 : 0} offset={1}>

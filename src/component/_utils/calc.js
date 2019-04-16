@@ -51,7 +51,7 @@ that.sort = (content, isAsc) => {
         list.forEach(n => {
             if (isNaN(parseFloat(n)) || !isFinite(n)) {
                 isNumber = false;
-                return false;
+                throw new Error("End For Each");
             }
         });
     }
