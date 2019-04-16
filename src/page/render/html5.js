@@ -12,7 +12,7 @@ export default class Html5Editor extends React.Component {
             mode: 'normal',
             code: "<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <label>Hello from Jay</label>\n</body>\n</html>",
             editorHeight: 460,
-            isPreview: true,
+            isPreview: false,
         }
     }
 
@@ -51,7 +51,7 @@ export default class Html5Editor extends React.Component {
                 <Row style={{background: '#ffffff'}}>
                     <Col span={isPreview ? 12 : 24}>
                         <MonacoEditor
-                            width={isPreview ? 420 : 980}
+                            width={isPreview ? 400 : '100%'}
                             height={editorHeight}
                             language="html"
                             theme="vs-dark"

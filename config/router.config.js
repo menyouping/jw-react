@@ -26,6 +26,7 @@ export default [
         {
           path: 'render',
           routes: [
+            { path: 'velocity', component: './render/velocity' },
             { path: 'html5', component: './render/html5' },
             { path: 'markdown', component: './render/markdown' },
           ]
