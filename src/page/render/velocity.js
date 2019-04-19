@@ -20,7 +20,6 @@ export default class VelocityEditor extends React.Component {
             result: '',
             editorHeight: 460,
             activeTab: 'tpl',
-            operations: <Button onClick={this.onRender} type="primary">渲染</Button>
         }
     }
 
@@ -59,7 +58,7 @@ export default class VelocityEditor extends React.Component {
     }
 
     onRender = () => {
-        let newArgCode = this.beautifyArgCode();
+        let newArgCode = this.onBeautifyArgCode();
         let asts = Velocity.parse(this.state.tplCode);
         let context = JSON.parse(newArgCode);
         this.setState({
@@ -70,13 +69,14 @@ export default class VelocityEditor extends React.Component {
         });
     }
 
-    beautifyArgCode = () => {
+    onBeautifyArgCode = () => {
         try {
             let content = this.state.argCode;
             if (content && content.length > 1 && content.indexOf("\"") == 0 && content.lastIndexOf("\"") == content.length - 1) {
                 content = content.substring(1, content.length - 1);
             }
             content = this.handleBeautify(content);
+            this.argEditor.setValue(content);
             return content;
         } catch (exp) {
             this.setState({
@@ -98,12 +98,22 @@ export default class VelocityEditor extends React.Component {
 
 
     render() {
-        const { tplCode, argCode, result, activeTab, editorHeight, operations } = this.state;
+        const { tplCode, argCode, result, activeTab, editorHeight } = this.state;
         const options = {
             selectOnLineNumbers: true
         };
         return (
-            <Tabs activeKey={activeTab} tabBarExtraContent={operations} onChange={this.onTabChange}>
+            <Tabs activeKey={activeTab} tabBarExtraContent={
+                <div>
+                    {
+                        activeTab == 'arg' ?
+                            <Button onClick={this.onBeautifyArgCode} type="default" style={{marginRight:10}}>美化</Button>
+                            :
+                            ''
+                    }
+                    <Button onClick={this.onRender} type="primary">渲染</Button>
+                </div>
+            } onChange={this.onTabChange}>
                 <TabPane tab="源码" key="tpl">
                     <MonacoEditor
                         height={editorHeight}
