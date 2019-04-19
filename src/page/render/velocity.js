@@ -1,10 +1,13 @@
-import { Button, Col, Row, Tabs } from 'antd';
+import { Button, Tabs, notification } from 'antd';
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
+import jslParser from "@/component/_utils/jsl.parser.min.js";
+import vkbeautify from "@/component/_utils/vkbeautify.js";
+import Velocity from 'velocityjs';
 
 
 const TabPane = Tabs.TabPane
-
+const Compile = Velocity.Compile;
 
 export default class VelocityEditor extends React.Component {
 
@@ -12,79 +15,128 @@ export default class VelocityEditor extends React.Component {
         super(props);
         this.state = {
             mode: 'normal',
-            code: "# Hello\n* This is jay's home",
+            tplCode: "This is ${owner}'s home",
+            argCode: '{"owner": "jay"}',
+            result: '',
             editorHeight: 460,
-            isPreview: true,
+            activeTab: 'tpl',
             operations: <Button onClick={this.onRender} type="primary">渲染</Button>
         }
     }
 
-    editorDidMount = (editor, monaco) => {
-        this.editor = editor;
-        this.editor.focus();
+    tplEditorDidMount = (editor, monaco) => {
+        this.tplEditor = editor;
+        this.tplEditor.focus();
     }
 
-    onEditorChange = (newValue, e) => {
+    argEditorDidMount = (editor, monaco) => {
+        this.argEditor = editor;
+    }
+
+    resultEditorDidMount = (editor, monaco) => {
+        this.resultEditor = editor;
+    }
+
+    onTplEditorChange = (newValue, e) => {
         this.setState({
             ...this.state,
-            code: newValue,
-            editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460),
+            tplCode: newValue,
+        });
+    }
+
+    onArgEditorChange = (newValue, e) => {
+        this.setState({
+            ...this.state,
+            argCode: newValue,
+        });
+    }
+
+    onTabChange = (key) => {
+        this.setState({
+            ...this.state,
+            activeTab: key,
         });
     }
 
     onRender = () => {
+        let newArgCode = this.beautifyArgCode();
+        let asts = Velocity.parse(this.state.tplCode);
+        let context = JSON.parse(newArgCode);
         this.setState({
             ...this.state,
-            isPreview: !this.state.isPreview,
+            argCode: newArgCode,
+            result: (new Compile(asts)).render(context, []),
+            activeTab: 'result',
         });
     }
 
-    callback = (key) => {
-        console.log(key);
+    beautifyArgCode = () => {
+        try {
+            let content = this.state.argCode;
+            if (content && content.length > 1 && content.indexOf("\"") == 0 && content.lastIndexOf("\"") == content.length - 1) {
+                content = content.substring(1, content.length - 1);
+            }
+            content = this.handleBeautify(content);
+            return content;
+        } catch (exp) {
+            this.setState({
+                ...this.state,
+                activeTab: 'arg',
+            });
+            this.argEditor.focus();
+            notification['error']({
+                message: '参数错误',
+                description: exp.toString(),
+            });
+        }
+    }
+
+    handleBeautify = (content) => {
+        jslParser.parse(content);
+        return vkbeautify.json(content);
     }
 
 
-render() {
-    const { code, editorHeight, isPreview, operations } = this.state;
-    const options = {
-        selectOnLineNumbers: true
-    };
-    return (
-        <Tabs defaultActiveKey="1" tabBarExtraContent={operations} onChange={this.callback}>
-            <TabPane tab="源码" key="1">
-                <MonacoEditor
-                    height={editorHeight}
-                    language="html"
-                    theme="vs-dark"
-                    value={code}
-                    options={options}
-                    onChange={this.onEditorChange}
-                    editorDidMount={this.editorDidMount}
-                />
-            </TabPane>
-            <TabPane tab="参数" key="2">
-                <MonacoEditor
-                    height={editorHeight}
-                    language="html"
-                    theme="vs-dark"
-                    value={code}
-                    options={options}
-                    onChange={this.onEditorChange}
-                    editorDidMount={this.editorDidMount}
-                />
-            </TabPane>
-            <TabPane tab="结果" key="3">
-                <MonacoEditor
-                    height={editorHeight}
-                    language="html"
-                    theme="vs-dark"
-                    value={code}
-                    options={options}
-                    onChange={this.onEditorChange}
-                    editorDidMount={this.editorDidMount}
-                />
-            </TabPane>
-        </Tabs>
-    );
-}
+    render() {
+        const { tplCode, argCode, result, activeTab, editorHeight, operations } = this.state;
+        const options = {
+            selectOnLineNumbers: true
+        };
+        return (
+            <Tabs activeKey={activeTab} tabBarExtraContent={operations} onChange={this.onTabChange}>
+                <TabPane tab="源码" key="tpl">
+                    <MonacoEditor
+                        height={editorHeight}
+                        language="xml"
+                        theme="vs-dark"
+                        value={tplCode}
+                        options={options}
+                        onChange={this.onTplEditorChange}
+                        editorDidMount={this.tplEditorDidMount}
+                    />
+                </TabPane>
+                <TabPane tab="参数" key="arg">
+                    <MonacoEditor
+                        height={editorHeight}
+                        language="json"
+                        theme="vs-dark"
+                        value={argCode}
+                        options={options}
+                        onChange={this.onArgEditorChange}
+                        editorDidMount={this.argEditorDidMount}
+                    />
+                </TabPane>
+                <TabPane tab="结果" key="result">
+                    <MonacoEditor
+                        height={editorHeight}
+                        language="xml"
+                        theme="vs-dark"
+                        value={result}
+                        options={options}
+                        editorDidMount={this.resultEditorDidMount}
+                    />
+                </TabPane>
+            </Tabs>
+        );
+    }
 }
