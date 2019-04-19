@@ -21,4 +21,5 @@ export default {
   // },
   base: '/jw/',
   runtimePublicPath: true,
+  history: 'hash',
 };
