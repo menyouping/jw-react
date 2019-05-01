@@ -9,7 +9,7 @@ export default class MarkdownEditor extends React.Component {
         super(props);
         this.state = {
             mode: 'normal',
-            code: "# Hello\n* This is jay's home",
+            code: localStorage.getItem('markdown') || "# Hello\n* This is jay's home",
             editorHeight: 460,
             isPreview: false,
         }
@@ -26,6 +26,7 @@ export default class MarkdownEditor extends React.Component {
             code: newValue,
             editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460),
         });
+        localStorage.setItem('markdown', newValue);
     }
 
     onPreview = () => {

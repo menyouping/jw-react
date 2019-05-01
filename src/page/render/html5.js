@@ -10,7 +10,7 @@ export default class Html5Editor extends React.Component {
         super(props);
         this.state = {
             mode: 'normal',
-            code: "<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <label>Hello from Jay</label>\n</body>\n</html>",
+            code: localStorage.getItem('html5') || "<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <label>Hello from Jay</label>\n</body>\n</html>",
             editorHeight: 460,
             isPreview: false,
         }
@@ -27,6 +27,7 @@ export default class Html5Editor extends React.Component {
             code: newValue,
             editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460),
         });
+        localStorage.setItem('html5', newValue);
     }
 
     onPreview = () => {

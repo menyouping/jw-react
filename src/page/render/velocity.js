@@ -15,8 +15,8 @@ export default class VelocityEditor extends React.Component {
         super(props);
         this.state = {
             mode: 'normal',
-            tplCode: "This is ${owner}'s home",
-            argCode: '{"owner": "jay"}',
+            tplCode: localStorage.getItem('velocity_tplCode') || "This is ${owner}'s home",
+            argCode: localStorage.getItem('velocity_argCode') ||'{"owner": "jay"}',
             result: '',
             editorHeight: 460,
             activeTab: 'tpl',
@@ -41,6 +41,7 @@ export default class VelocityEditor extends React.Component {
             ...this.state,
             tplCode: newValue,
         });
+        localStorage.setItem('velocity_tplCode', newValue);
     }
 
     onArgEditorChange = (newValue, e) => {
@@ -48,6 +49,7 @@ export default class VelocityEditor extends React.Component {
             ...this.state,
             argCode: newValue,
         });
+        localStorage.setItem('velocity_argCode', newValue);
     }
 
     onTabChange = (key) => {
@@ -77,6 +79,8 @@ export default class VelocityEditor extends React.Component {
             }
             content = this.handleBeautify(content);
             this.argEditor.setValue(content);
+
+            localStorage.setItem('velocity_argCode', newArgCode);
             return content;
         } catch (exp) {
             this.setState({
