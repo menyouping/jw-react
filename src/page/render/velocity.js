@@ -13,10 +13,12 @@ export default class VelocityEditor extends React.Component {
 
     constructor(props) {
         super(props);
+        let tplCode = localStorage.getItem('velocity_tplCode');
+        let argCode = localStorage.getItem('velocity_argCode');
         this.state = {
             mode: 'normal',
-            tplCode: localStorage.getItem('velocity_tplCode') || "This is ${owner}'s home",
-            argCode: localStorage.getItem('velocity_argCode') ||'{"owner": "jay"}',
+            tplCode: tplCode || "This is ${owner}'s home",
+            argCode: argCode || '{"owner": "jay"}',
             result: '',
             editorHeight: 460,
             activeTab: 'tpl',
