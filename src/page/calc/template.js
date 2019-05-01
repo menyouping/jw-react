@@ -17,29 +17,35 @@ export default class TemplateEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            original: 'B\n1\nA\n1',
-            handler: DEFAULT_TPL,
+            original: localStorage.getItem('template_original') || 'B\n1\nA\n1',
+            handler: localStorage.getItem('template_handler') || DEFAULT_TPL,
             result: '',
             resultVisible: true,
-            contentType: 'line',
-            handlerType: 'tpl',
+            contentType: localStorage.getItem('template_contentType') || 'line',
+            handlerType: localStorage.getItem('template_handlerType') || 'tpl',
         }
     }
 
     handleContentTypeChange = (value) => {
+        let handler = this.getHandlerContent(value, this.state.handlerType);
         this.setState({
             ...this.state,
             contentType: value,
-            handler: this.getHandlerContent(value, this.state.handlerType),
+            handler,
         });
+        localStorage.setItem('template_contentType', value);
+        localStorage.setItem('template_handler', handler);
     }
 
     handleHandlerTypeChange = (value) => {
+        let handler = this.getHandlerContent(this.state.contentType, value);
         this.setState({
             ...this.state,
             handlerType: value,
-            handler: this.getHandlerContent(this.state.contentType, value),
+            handler,
         });
+        localStorage.setItem('template_handlerType', value);
+        localStorage.setItem('template_handler', handler);
     }
 
     originalEditorDidMount = (editor, monaco) => {
@@ -59,6 +65,7 @@ export default class TemplateEditor extends React.Component {
             ...this.state,
             original: newValue,
         });
+        localStorage.setItem('template_original', newValue);
     }
 
     onHandlerEditorChange = (newValue, e) => {
@@ -66,6 +73,7 @@ export default class TemplateEditor extends React.Component {
             ...this.state,
             handler: newValue,
         });
+        localStorage.setItem('template_handler', newValue);
     }
 
     onOriginalUnique = () => {
@@ -75,6 +83,7 @@ export default class TemplateEditor extends React.Component {
             ...this.state,
             original: content,
         });
+        localStorage.setItem('template_original', content);
     }
 
     onOriginalAsc = () => {
@@ -84,6 +93,7 @@ export default class TemplateEditor extends React.Component {
             ...this.state,
             original: content,
         });
+        localStorage.setItem('template_original', content);
     }
 
     onOriginalDesc = () => {
@@ -93,6 +103,7 @@ export default class TemplateEditor extends React.Component {
             ...this.state,
             original: content,
         });
+        localStorage.setItem('template_original', content);
     }
 
     onTrim = () => {
@@ -101,6 +112,8 @@ export default class TemplateEditor extends React.Component {
             handlerType: 'func',
             handler: DEFAULT_FUNC,
         });
+        localStorage.setItem('template_handlerType', 'func');
+        localStorage.setItem('template_handler', DEFAULT_FUNC);
     }
 
     onLength = () => {
@@ -109,14 +122,19 @@ export default class TemplateEditor extends React.Component {
             handlerType: 'func',
             handler: DEFAULT_MULTI_FUNC,
         });
+        localStorage.setItem('template_handlerType', 'func');
+        localStorage.setItem('template_handler', DEFAULT_MULTI_FUNC);
     }
 
     onRemoveLine = () => {
+        let handler = "function beautify(line, i) {\n    return line.replace(/^\\d+\\./,'');\n}";
         this.setState({
             ...this.state,
             handlerType: 'func',
-            handler: "function beautify(line, i) {\n    return line.replace(/^\\d+\\./,'');\n}",
+            handler,
         });
+        localStorage.setItem('template_handlerType', 'func');
+        localStorage.setItem('template_handler', handler);
     }
 
     onBeautify = () => {
@@ -179,6 +197,7 @@ export default class TemplateEditor extends React.Component {
             original: this.state.result,
             result: ''
         });
+        localStorage.setItem('template_original', this.state.result);
     }
 
     onExpandHandlerEditor = () => {

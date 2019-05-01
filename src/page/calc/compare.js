@@ -9,10 +9,16 @@ export default class CompareEditor extends React.Component {
     original.updateOptions({ readOnly: false });
   }
 
+  onChange = (value) => {
+    localStorage.setItem('compare_value', value);
+  }
+
   render() {
     const options = {
       //renderSideBySide: false
     };
+    let originalCode = "原始内容";
+    let valueCode = localStorage.getItem('compare_value') || "新内容";
     return (
       <MonacoDiffEditor
         width="1135"
@@ -20,9 +26,10 @@ export default class CompareEditor extends React.Component {
         language="javascript"
         theme="vs-dark"
         options={options}
-        original="原始内容"
-        value="新内容"
+        original={originalCode}
+        value={valueCode}
         editorDidMount={this.editorDidMount}
+        onChange={this.onChange}
       />
     );
   }
