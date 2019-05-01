@@ -7,13 +7,17 @@ import { isFunction } from 'util';
 export default class CodeEditor extends React.Component {
   constructor(props) {
     super(props);
+
+    let code = localStorage.getItem(props.defaultConfig['cacheKey']) || props.defaultConfig['code'];
     this.state = {
-      code: '{\n    "hello": "Hello from Jay!"\n}',
+      cacheKey: 'codeEditor',
+      code: '',
       mode: 'normal',
       height: 480,
       editorHeight: 460,
       contentType: 'json',
-      ...props.defaultConfig
+      ...props.defaultConfig,
+      code: code
     }
     this.handleBeautify = isFunction(this.props.handleBeautify) ? this.props.handleBeautify : (content) => { return content };
     this.handleUnformat = isFunction(this.props.handleUnformat) ? this.props.handleUnformat : (content) => { return content };
@@ -33,6 +37,8 @@ export default class CodeEditor extends React.Component {
         }
         content = this.handleBeautify(content);
         this.editor.setValue(content);
+
+        localStorage.setItem(this.state.cacheKey, content);
       } catch (exp) {
         notification['error']({
           message: '错误提醒',
@@ -51,6 +57,8 @@ export default class CodeEditor extends React.Component {
         }
         content = this.handleUnformat(content);
         this.editor.setValue(content);
+
+        localStorage.setItem(this.state.cacheKey, content);
       } catch (exp) {
         notification['error']({
           message: '错误提醒',
@@ -66,6 +74,8 @@ export default class CodeEditor extends React.Component {
       code: newValue,
       editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460)
     });
+
+    localStorage.setItem(this.state.cacheKey, newValue);
   }
 
   render() {
