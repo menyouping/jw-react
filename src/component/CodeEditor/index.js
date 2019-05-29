@@ -3,9 +3,6 @@ import { Button, Col, notification, Row } from 'antd';
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import { isFunction } from 'util';
-import { getMenuData } from '@/common/menu';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default class CodeEditor extends React.Component {
   constructor(props) {
@@ -41,7 +38,7 @@ export default class CodeEditor extends React.Component {
       content = this.handleBeautify(content);
 
       localStorage.setItem(this.state.cacheKey, content);
-      this.setState({...this.state, code: content, editable: true});
+      this.setState({...this.state, code: content});
     } catch (exp) {
       notification['error']({
         message: '错误提醒',
@@ -59,17 +56,13 @@ export default class CodeEditor extends React.Component {
       content = this.handleUnformat(content);
 
       localStorage.setItem(this.state.cacheKey, content);
-      this.setState({...this.state, code: content, editable: true});
+      this.setState({...this.state, code: content});
     } catch (exp) {
       notification['error']({
         message: '错误提醒',
         description: exp.toString(),
       });
     }
-  }
-
-  onPreview = () => {
-    this.setState({...this.state, editable: false});
   }
 
   onEditorChange = (newValue, e) => {
@@ -86,6 +79,7 @@ export default class CodeEditor extends React.Component {
     const { code, contentType, editorHeight,editable } = this.state;
     const options = {
       selectOnLineNumbers: true,
+      renderSideBySide: false,
       roundedSelection: false,
       readOnly: false,
       cursorStyle: 'line',
@@ -98,37 +92,19 @@ export default class CodeEditor extends React.Component {
           <Col span={24}>
             <Button onClick={this.onBeautifyCode} type="primary">美化</Button>
             <Button onClick={this.onUnformatCode} type="default" style={{ marginLeft: '15px' }}>一行</Button>
-            <Button onClick={this.onPreview} type="default" style={{ marginLeft: '15px' }}>预览</Button>
           </Col>
         </Row>
         <Row style={{ paddingTop: '15px' }}>
           <Col span={24}>
-              <div style={{display: editable ? 'block' : 'none'}}>
               <MonacoEditor
                 height={editorHeight}
                 language={contentType}
-                theme="vs-dark"
                 value={code}
                 options={this.options}
+                theme="vs-dark"
                 onChange={this.onEditorChange}
                 editorDidMount={this.editorDidMount}
               />
-              </div>
-              <SyntaxHighlighter
-                  language={contentType}
-                  showLineNumbers
-                  style={dark}
-                  customStyle={{
-                    border: 0,
-                    borderRadius: 0,
-                    background: '#000',
-                    width: '100%',
-                    height:editorHeight,
-                    display: !editable? 'block': 'none'
-                  }}
-                >
-                  {code}
-                </SyntaxHighlighter>
           </Col>
         </Row>
       </div>
