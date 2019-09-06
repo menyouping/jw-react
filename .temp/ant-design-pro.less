@@ -1,0 +1,223 @@
+@import "~antd/lib/style/themes/default.less";
+
+/* 
+  Convert to from  src/component/GlobalFooter/index.less
+ */
+
+.antd-pro-component-global-footer-index-globalFooter {
+  padding: 0 16px;
+  margin: 48px 0 24px 0;
+  text-align: center;
+
+  .antd-pro-component-global-footer-index-links {
+    margin-bottom: 8px;
+
+    a {
+      color: @text-color-secondary;
+      transition: all 0.3s;
+
+      &:not(:last-child) {
+        margin-right: 40px;
+      }
+
+      &:hover {
+        color: @text-color;
+      }
+    }
+  }
+
+  .antd-pro-component-global-footer-index-copyright {
+    color: @text-color-secondary;
+    font-size: @font-size-base;
+  }
+}
+
+/* 
+  Convert to from  src/component/GlobalHeader/index.less
+ */
+
+.antd-pro-component-global-header-index-header {
+  height: 64px;
+  padding: 0 12px 0 0;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  position: relative;
+}
+
+.ant-layout {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.antd-pro-component-global-header-index-logo {
+  height: 64px;
+  line-height: 58px;
+  vertical-align: top;
+  display: inline-block;
+  padding: 0 0 0 24px;
+  cursor: pointer;
+  font-size: 20px;
+  img {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.antd-pro-component-global-header-index-menu {
+  :global(.anticon) {
+    margin-right: 8px;
+  }
+  :global(.ant-dropdown-menu-item) {
+    width: 160px;
+  }
+}
+
+i.antd-pro-component-global-header-index-trigger {
+  font-size: 20px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: all 0.3s, padding 0s;
+  padding: 0 24px;
+  &:hover {
+    background: @primary-1;
+  }
+}
+
+.antd-pro-component-global-header-index-right {
+  float: right;
+  height: 100%;
+  .antd-pro-component-global-header-index-action {
+    cursor: pointer;
+    padding: 0 12px;
+    display: inline-block;
+    transition: all 0.3s;
+    height: 100%;
+    > i {
+      font-size: 16px;
+      vertical-align: middle;
+      color: @text-color;
+    }
+    &:hover,
+    &:global(.ant-popover-open) {
+      background: @primary-1;
+    }
+  }
+  .antd-pro-component-global-header-index-search {
+    padding: 0;
+    margin: 0 12px;
+    &:hover {
+      background: transparent;
+    }
+  }
+  .antd-pro-component-global-header-index-account {
+    .antd-pro-component-global-header-index-avatar {
+      margin: 20px 8px 20px 0;
+      color: @primary-color;
+      background: rgba(255, 255, 255, 0.85);
+      vertical-align: middle;
+    }
+  }
+}
+
+@media only screen and (max-width: @screen-md) {
+  .antd-pro-component-global-header-index-header {
+    :global(.ant-divider-vertical) {
+      vertical-align: unset;
+    }
+    .antd-pro-component-global-header-index-name {
+      display: none;
+    }
+    i.antd-pro-component-global-header-index-trigger {
+      padding: 0 12px;
+    }
+    .antd-pro-component-global-header-index-logo {
+      padding-right: 12px;
+      position: relative;
+    }
+    .antd-pro-component-global-header-index-right {
+      position: absolute;
+      right: 12px;
+      top: 0;
+      background: #fff;
+      .antd-pro-component-global-header-index-account {
+        .antd-pro-component-global-header-index-avatar {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+/* 
+  Convert to from  src/component/SiderMenu/index.less
+ */
+@ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
+.antd-pro-component-sider-menu-index-logo {
+  height: 64px;
+  position: relative;
+  line-height: 64px;
+  padding-left: (@menu-collapsed-width - 32px) / 2;
+  transition: all 0.3s;
+  background: #002140;
+  overflow: hidden;
+  img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 32px;
+  }
+  h1 {
+    color: white;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 20px;
+    margin: 0 0 0 12px;
+    font-family: "Myriad Pro", "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-weight: 600;
+  }
+}
+
+.antd-pro-component-sider-menu-index-sider {
+  min-height: 100vh;
+  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+  position: relative;
+  z-index: 10;
+  &.antd-pro-component-sider-menu-index-ligth {
+    background-color: white;
+    .antd-pro-component-sider-menu-index-logo {
+      background: white;
+      h1 {
+        color: #002140;
+      }
+    }
+  }
+}
+
+.antd-pro-component-sider-menu-index-icon {
+  width: 14px;
+  margin-right: 10px;
+}
+
+.drawer .drawer-content {
+  background: #001529;
+}
+
+.ant-menu-inline-collapsed {
+  & > .ant-menu-item .sider-menu-item-img + span,
+  &
+    > .ant-menu-item-group
+    > .ant-menu-item-group-list
+    > .ant-menu-item
+    .sider-menu-item-img
+    + span,
+  & > .ant-menu-submenu > .ant-menu-submenu-title .sider-menu-item-img + span {
+    max-width: 0;
+    display: inline-block;
+    opacity: 0;
+  }
+}
+
+.ant-menu-item .sider-menu-item-img + span,
+.ant-menu-submenu-title .sider-menu-item-img + span {
+  transition: opacity 0.3s @ease-in-out, width 0.3s @ease-in-out;
+  opacity: 1;
+}

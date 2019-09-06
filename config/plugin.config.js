@@ -24,6 +24,7 @@ export default config => {
       varFile: path.join(__dirname, '../node_modules/antd/lib/style/themes/default.less'),
       mainLessFile: outFile, //     themeVariables: ['@primary-color'],
       indexFileName: 'index.html',
+      generateOne: true,
     },
   ]);
 
@@ -32,5 +33,24 @@ export default config => {
       languages: ['xml','mysql','velocity','javascript','json']
     },
   ]);
+
+  config.optimization
+  .runtimeChunk(false)
+  .splitChunks({
+    chunks: 'async',
+    name: 'vendors',
+    maxInitialRequests: Infinity,
+    minSize: 0,
+    cacheGroups: {
+        vendors: {
+            test: module => {
+              return false;
+            },
+            name(module) {
+              return 'misc';
+            }
+        },
+    },
+  });
 
 };
