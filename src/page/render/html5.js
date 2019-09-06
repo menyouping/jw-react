@@ -10,9 +10,9 @@ export default class Html5Editor extends React.Component {
         super(props);
         this.state = {
             mode: 'normal',
-            code: "<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <label>Hello from Jay</label>\n</body>\n</html>",
-            editorHeight: 460,
-            isPreview: true,
+            code: localStorage.getItem('html5') || "<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <label>Hello from Jay</label>\n</body>\n</html>",
+            editorHeight: 800,
+            isPreview: false,
         }
     }
 
@@ -25,8 +25,9 @@ export default class Html5Editor extends React.Component {
         this.setState({
             ...this.state,
             code: newValue,
-            editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460),
+            editorHeight: Math.max(18 * newValue.split(/\n/g).length, 800),
         });
+        localStorage.setItem('html5', newValue);
     }
 
     onPreview = () => {
@@ -51,7 +52,7 @@ export default class Html5Editor extends React.Component {
                 <Row style={{background: '#ffffff'}}>
                     <Col span={isPreview ? 12 : 24}>
                         <MonacoEditor
-                            width={isPreview ? 420 : 980}
+                            width={isPreview ? 400 : '100%'}
                             height={editorHeight}
                             language="html"
                             theme="vs-dark"

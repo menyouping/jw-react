@@ -7,13 +7,18 @@ import { isFunction } from 'util';
 export default class CodeEditor extends React.Component {
   constructor(props) {
     super(props);
+
+    let code = localStorage.getItem(props.defaultConfig['cacheKey']) || props.defaultConfig['code'];
     this.state = {
-      code: '{\n    "hello": "Hello from Jay!"\n}',
+      cacheKey: 'codeEditor',
+      code: '',
       mode: 'normal',
-      height: 480,
-      editorHeight: 460,
+      height: 820,
+      editorHeight: 800,
       contentType: 'json',
-      ...props.defaultConfig
+      ...props.defaultConfig,
+      code: code,
+      editable: true
     }
     this.handleBeautify = isFunction(this.props.handleBeautify) ? this.props.handleBeautify : (content) => { return content };
     this.handleUnformat = isFunction(this.props.handleUnformat) ? this.props.handleUnformat : (content) => { return content };
@@ -25,38 +30,38 @@ export default class CodeEditor extends React.Component {
   }
 
   onBeautifyCode = () => {
-    if (this.editor) {
-      try {
-        let content = this.editor.getValue();
-        if (content && content.length > 1 && content.indexOf("\"") == 0 && content.lastIndexOf("\"") == content.length - 1) {
-          content = content.substring(1, content.length - 1);
-        }
-        content = this.handleBeautify(content);
-        this.editor.setValue(content);
-      } catch (exp) {
-        notification['error']({
-          message: '错误提醒',
-          description: exp.toString(),
-        });
+    let {code: content} = this.state;
+    try {
+      if (content && content.length > 1 && content.indexOf("\"") == 0 && content.lastIndexOf("\"") == content.length - 1) {
+        content = content.substring(1, content.length - 1);
       }
+      content = this.handleBeautify(content);
+
+      localStorage.setItem(this.state.cacheKey, content);
+      this.setState({...this.state, code: content});
+    } catch (exp) {
+      notification['error']({
+        message: '错误提醒',
+        description: exp.toString(),
+      });
     }
   }
 
   onUnformatCode = () => {
-    if (this.editor) {
-      try {
-        let content = this.editor.getValue();
-        if (content && content.length > 1 && content.indexOf("\"") == 0 && content.lastIndexOf("\"") == content.length - 1) {
-          content = content.substring(1, content.length - 1);
-        }
-        content = this.handleUnformat(content);
-        this.editor.setValue(content);
-      } catch (exp) {
-        notification['error']({
-          message: '错误提醒',
-          description: exp.toString(),
-        });
+    let {code: content} = this.state;
+    try {
+      if (content && content.length > 1 && content.indexOf("\"") == 0 && content.lastIndexOf("\"") == content.length - 1) {
+        content = content.substring(1, content.length - 1);
       }
+      content = this.handleUnformat(content);
+
+      localStorage.setItem(this.state.cacheKey, content);
+      this.setState({...this.state, code: content});
+    } catch (exp) {
+      notification['error']({
+        message: '错误提醒',
+        description: exp.toString(),
+      });
     }
   }
 
@@ -64,14 +69,17 @@ export default class CodeEditor extends React.Component {
     this.setState({
       ...this.state,
       code: newValue,
-      editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460)
+      editorHeight: Math.max(18 * newValue.split(/\n/g).length, 800)
     });
+
+    localStorage.setItem(this.state.cacheKey, newValue);
   }
 
   render() {
-    const { code, contentType, editorHeight } = this.state;
+    const { code, contentType, editorHeight,editable } = this.state;
     const options = {
       selectOnLineNumbers: true,
+      renderSideBySide: false,
       roundedSelection: false,
       readOnly: false,
       cursorStyle: 'line',
@@ -88,15 +96,15 @@ export default class CodeEditor extends React.Component {
         </Row>
         <Row style={{ paddingTop: '15px' }}>
           <Col span={24}>
-            <MonacoEditor
-              height={editorHeight}
-              language={contentType}
-              theme="vs-dark"
-              value={code}
-              options={this.options}
-              onChange={this.onEditorChange}
-              editorDidMount={this.editorDidMount}
-            />
+              <MonacoEditor
+                height={editorHeight}
+                language={contentType}
+                value={code}
+                options={this.options}
+                theme="vs-dark"
+                onChange={this.onEditorChange}
+                editorDidMount={this.editorDidMount}
+              />
           </Col>
         </Row>
       </div>

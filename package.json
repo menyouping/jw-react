@@ -20,7 +20,8 @@
     "tslint-config-prettier": "^1.13.0",
     "tslint-react": "^3.6.0",
     "umi": "^2.9.0",
-    "umi-plugin-react": "^1.0.0"
+    "umi-plugin-react": "^1.0.0",
+    "velocityjs": "^1.1.4"
   },
   "devDependencies": {
     "antd-pro-merge-less": "^1.0.0",

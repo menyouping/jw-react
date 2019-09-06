@@ -16,6 +16,7 @@ export default class XMLEditor extends React.Component {
 
   render() {
     const defaultConfig = {
+      cacheKey:'xmlEditor',
       code: '<root>\n    <a>Hello,World</a>\n</root>',
       contentType: 'xml'
     };

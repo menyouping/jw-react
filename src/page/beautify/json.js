@@ -18,7 +18,9 @@ export default class JSONEditor extends React.Component {
 
   render() {
     const defaultConfig = {
-      contentType: 'json'
+      cacheKey:'jsonEditor',
+      contentType: 'json',
+      code: '{\n    "hello": "Hello from Jay!"\n}',
     };
     return (
       <CodeEditor

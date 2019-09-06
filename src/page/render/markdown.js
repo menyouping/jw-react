@@ -9,9 +9,9 @@ export default class MarkdownEditor extends React.Component {
         super(props);
         this.state = {
             mode: 'normal',
-            code: "# Hello\n* This is jay's home",
-            editorHeight: 460,
-            isPreview: true,
+            code: localStorage.getItem('markdown') || "# Hello\n* This is jay's home",
+            editorHeight: 800,
+            isPreview: false,
         }
     }
 
@@ -24,8 +24,9 @@ export default class MarkdownEditor extends React.Component {
         this.setState({
             ...this.state,
             code: newValue,
-            editorHeight: Math.max(18 * newValue.split(/\n/g).length, 460),
+            editorHeight: Math.max(18 * newValue.split(/\n/g).length, 800),
         });
+        localStorage.setItem('markdown', newValue);
     }
 
     onPreview = () => {
@@ -50,9 +51,9 @@ export default class MarkdownEditor extends React.Component {
                 <Row style={{background: '#ffffff'}}>
                     <Col span={isPreview ? 12 : 24}>
                         <MonacoEditor
-                            width={isPreview ? 420 : 980}
+                            width={isPreview ? 400 : '100%'}
                             height={editorHeight}
-                            language="html"
+                            language="markdown"
                             theme="vs-dark"
                             value={code}
                             options={options}

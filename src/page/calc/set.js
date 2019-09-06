@@ -9,8 +9,8 @@ export default class SetEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            aCode: 'B\n1\nA\n1',
-            bCode: "1\n",
+            aCode: localStorage.getItem('set_acode') || 'B\n1\nA\n1',
+            bCode: localStorage.getItem('set_bcode') || "1\n",
             result: '',
         }
     }
@@ -32,6 +32,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             aCode: newValue,
         });
+        localStorage.setItem('set_acode', newValue);
     }
 
     onBEditorChange = (newValue, e) => {
@@ -39,6 +40,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             bCode: newValue,
         });
+        localStorage.setItem('set_bcode', newValue);
     }
 
     onAUnique = () => {
@@ -48,6 +50,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             aCode: content,
         });
+        localStorage.setItem('set_acode', content);
     }
 
     onAAsc = () => {
@@ -57,6 +60,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             aCode: content,
         });
+        localStorage.setItem('set_acode', content);
     }
 
     onADesc = () => {
@@ -66,6 +70,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             aCode: content,
         });
+        localStorage.setItem('set_acode', content);
     }
 
     onBUnique = () => {
@@ -75,6 +80,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             bCode: content,
         });
+        localStorage.setItem('set_bcode', content);
     }
 
     onBAsc = () => {
@@ -84,6 +90,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             bCode: content,
         });
+        localStorage.setItem('set_bcode', content);
     }
 
     onBDesc = () => {
@@ -93,6 +100,7 @@ export default class SetEditor extends React.Component {
             ...this.state,
             bCode: content,
         });
+        localStorage.setItem('set_bcode', content);
     }
 
     onResultAsc = () => {
@@ -197,7 +205,7 @@ export default class SetEditor extends React.Component {
                     <Col span={6}>
                         <MonacoEditor
                             width="280"
-                            height="460"
+                            height="800"
                             language="javascript"
                             theme="vs-dark"
                             value={aCode}
@@ -209,7 +217,7 @@ export default class SetEditor extends React.Component {
                     <Col span={6} offset={2}>
                         <MonacoEditor
                             width="280"
-                            height="460"
+                            height="800"
                             language="javascript"
                             theme="vs-dark"
                             value={bCode}
@@ -227,7 +235,7 @@ export default class SetEditor extends React.Component {
                     <Col span={6}>
                         <MonacoEditor
                             width="280"
-                            height="460"
+                            height="800"
                             language="javascript"
                             theme="vs-dark"
                             value={result}

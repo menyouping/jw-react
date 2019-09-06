@@ -16,6 +16,7 @@ export default class XMLEditor extends React.Component {
 
   render() {
     const defaultConfig = {
+      cacheKey:'sqlEditor',
       code: 'select * from table',
       contentType: 'mysql'
     };

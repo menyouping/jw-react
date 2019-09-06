@@ -30,7 +30,7 @@ export default config => {
 
   config.plugin('monaco-editor').use(MonacoWebpackPlugin, [
     {
-      languages: ['xml','mysql','velocity','javascript','json']
+      languages: ['xml','mysql','velocity','javascript','json','html', 'markdown']
     },
   ]);
 
@@ -43,7 +43,7 @@ export default config => {
     minSize: 0,
     cacheGroups: {
         vendors: {
-            test: module => {
+            test(module) {
               return false;
             },
             name(module) {

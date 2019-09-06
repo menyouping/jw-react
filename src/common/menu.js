@@ -50,6 +50,10 @@ const menuData = [
     path: 'render',
     children: [
       {
+        name: 'Velocity',
+        path: 'velocity',
+      },
+      {
         name: 'HTML5',
         path: 'html5',
       },

@@ -24,4 +24,5 @@ export default {
   base: '/jw/',
   runtimePublicPath: true,
   chainWebpack: webpackPlugin,
+  history: 'hash',
 };
