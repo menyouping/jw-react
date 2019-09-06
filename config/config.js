@@ -1,7 +1,9 @@
 import pageRoutes from './router.config';
+import webpackPlugin from './plugin.config';
 
 export default {
   singular: true,
+  cssLoaderVersion: 2,
   plugins: [
     ['umi-plugin-react', {
       antd: true,
@@ -21,4 +23,5 @@ export default {
   // },
   base: '/jw/',
   runtimePublicPath: true,
+  chainWebpack: webpackPlugin,
 };

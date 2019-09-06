@@ -17,7 +17,7 @@ export default class XMLEditor extends React.Component {
   render() {
     const defaultConfig = {
       code: 'select * from table',
-      contentType: 'sql'
+      contentType: 'mysql'
     };
     return (
       <CodeEditor
