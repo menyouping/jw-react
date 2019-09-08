@@ -1,6 +1,6 @@
 // Change theme plugin
 
-import MergeLessPlugin from 'antd-pro-merge-less';
+// import MergeLessPlugin from 'antd-pro-merge-less';
 import AntDesignThemePlugin from 'antd-theme-webpack-plugin';
 import path from 'path';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
@@ -10,12 +10,12 @@ export default config => {
   const outFile = path.join(__dirname, '../.temp/ant-design-pro.less');
   const stylesDir = path.join(__dirname, '../src/');
 
-  config.plugin('merge-less').use(MergeLessPlugin, [
-    {
-      stylesDir,
-      outFile,
-    },
-  ]);
+  // config.plugin('merge-less').use(MergeLessPlugin, [
+  //   {
+  //     stylesDir,
+  //     outFile,
+  //   },
+  // ]);
 
   config.plugin('ant-design-theme').use(AntDesignThemePlugin, [
     {
@@ -30,27 +30,27 @@ export default config => {
 
   config.plugin('monaco-editor').use(MonacoWebpackPlugin, [
     {
-      languages: ['xml','mysql','velocity','javascript','json','html', 'markdown']
+      languages: ['xml','mysql','velocity','javascript','json','html', 'markdown'],
     },
   ]);
 
-  config.optimization
-  .runtimeChunk(false)
-  .splitChunks({
-    chunks: 'async',
-    name: 'vendors',
-    maxInitialRequests: Infinity,
-    minSize: 0,
-    cacheGroups: {
-        vendors: {
-            test(module) {
-              return false;
-            },
-            name(module) {
-              return 'misc';
-            }
-        },
-    },
-  });
+  // config.optimization
+  // .runtimeChunk(false)
+  // .splitChunks({
+  //   chunks: 'async',
+  //   name: 'vendors',
+  //   maxInitialRequests: Infinity,
+  //   minSize: 0,
+  //   cacheGroups: {
+  //       vendors: {
+  //           test(module) {
+  //             return false;
+  //           },
+  //           name(module) {
+  //             return 'misc';
+  //           }
+  //       },
+  //   },
+  // });
 
 };
